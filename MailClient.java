@@ -55,4 +55,11 @@ public class MailClient
         MailItem item = new MailItem(user, to, message, subject);
         server.post(item);
     }
+    
+    public void amountMailItem()
+    {
+        int amount;
+        amount = server.howManyMailItems(user);
+        System.out.println("Numero de mails: " + amount);
+    }
 }
