@@ -11,6 +11,10 @@ public class MailClient
     private MailServer server;
     // The user running this client.
     private String user;
+    private boolean activar;
+    private MailItem subject;
+    private MailItem message;
+    private MailItem from;
 
     /**
      * Create a mail client run by user and attached to the given server.
@@ -20,12 +24,20 @@ public class MailClient
         this.server = server;
         this.user = user;
     }
+    
+    public void activarRespuesta(boolean activar)
+    {
+        activar = false;
+    }
 
     /**
      * Return the next mail item (if any) for this user.
      */
     public MailItem getNextMailItem()
     {
+        if(activar == true){
+          
+        }
         return server.getNextMailItem(user);
     }
 
@@ -43,6 +55,13 @@ public class MailClient
             item.print();
         }
     }
+    
+    public void fijarRespuesta(String asunto, String mensaje)
+    {
+        String subject = asunto;
+        String message = mensaje;
+    }
+    
 
     /**
      * Send the given message to the given recipient via
