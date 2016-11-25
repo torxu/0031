@@ -12,9 +12,10 @@ public class MailClient
     // The user running this client.
     private String user;
     private boolean activar;
-    private MailItem subject;
-    private MailItem message;
-    private MailItem from;
+    private String subject;
+    private String message;
+    private MailItem ultimoMensaje;
+
 
     /**
      * Create a mail client run by user and attached to the given server.
@@ -23,11 +24,15 @@ public class MailClient
     {
         this.server = server;
         this.user = user;
+        subject = "";
+        message = "";
+        activar = false;
+        ultimoMensaje = null;
     }
     
-    public void activarRespuesta(boolean activar)
+    public void activarRespuesta()
     {
-        activar = false;
+        activar = !activar;
     }
 
     /**
@@ -35,10 +40,16 @@ public class MailClient
      */
     public MailItem getNextMailItem()
     {
-        if(activar == true){
-          
+        MailItem item = server.getNextMailItem(user);
+        ultimoMensaje = item;
+        if(activar && item != null){
+            MailItem email = new MailItem(user, item.getFrom(), subject, message);
+            server.post(email);
         }
-        return server.getNextMailItem(user);
+        if(item != null){
+            ultimoMensaje = item;
+        }
+        return item;
     }
 
     /**
@@ -54,12 +65,19 @@ public class MailClient
         else {
             item.print();
         }
+        if(activar && item != null){
+            MailItem email = new MailItem(user, item.getFrom(), subject, message);
+            server.post(email);
+        }
+        if(item != null){
+            ultimoMensaje = item;
+        }
     }
     
     public void fijarRespuesta(String asunto, String mensaje)
     {
-        String subject = asunto;
-        String message = mensaje;
+        this.subject = asunto;
+        this.message = mensaje;
     }
     
 
@@ -80,5 +98,15 @@ public class MailClient
         int amount;
         amount = server.howManyMailItems(user);
         System.out.println("Numero de mails: " + amount);
+    }
+    
+    public void imprimirUltimoMensaje()
+    {
+        if(ultimoMensaje == null){
+            System.out.println("No tiene mensajes que leer");
+        }
+        else{
+            ultimoMensaje.print();
+        }
     }
 }
